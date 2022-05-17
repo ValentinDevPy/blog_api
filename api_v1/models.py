@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import UniqueConstraint
 
 User = get_user_model()
 
@@ -48,6 +49,12 @@ class Follow(models.Model):
         related_name='following',
         on_delete=models.CASCADE,
     )
+    
+    class Meta:
+        constraints = [UniqueConstraint(
+            fields=['user', 'author'],
+            name='unique_follow',
+        )]
 
 
 class Readed(models.Model):
@@ -61,3 +68,9 @@ class Readed(models.Model):
         related_name='post',
         on_delete=models.DO_NOTHING,
     )
+    
+    class Meta:
+        constraints = [UniqueConstraint(
+            fields=['user', 'post'],
+            name='unique_readed',
+        )]

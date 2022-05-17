@@ -1,14 +1,21 @@
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 
-from api_v1.models import Post
-from api_v1.serializers import FeedSerializer
+from api_v1.models import Post, Follow
+from api_v1.serializers import FeedSerializer, FollowSerializer
 
 
-class FeedViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
+class FeedViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FeedSerializer
-    pagination_class = PageNumberPagination
+    
+    def get_queryset(self):
+        user = self.request.user
+        posts = Post.objects.filter(author__following__user=user)[:500]
+        return posts
+
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
     
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(user=self.request.user)

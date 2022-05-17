@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 
-from api_v1.models import Post
+from api_v1.models import Post, Follow
 
 
 class FeedSerializer(serializers.ModelSerializer):
@@ -10,3 +10,10 @@ class FeedSerializer(serializers.ModelSerializer):
     class Meta:
         exclude = ('id',)
         model = Post
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        exclude = ('id', 'user')
+        model = Follow
