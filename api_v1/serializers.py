@@ -7,6 +7,7 @@ from api_v1.models import Post, Follow, Readed
 
 
 class FeedSerializer(serializers.ModelSerializer):
+    """Сериализатор ленты, основанной на подписках на авторов."""
     author = SlugRelatedField(slug_field='username', read_only=True)
     
     class Meta:
@@ -15,6 +16,8 @@ class FeedSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    """Сериализатор подписок на авторов."""
+    
     def create(self, validated_data):
         try:
             follow = Follow.objects.create(**validated_data)
@@ -42,3 +45,33 @@ class ReadedSerializer(serializers.ModelSerializer):
     class Meta:
         exclude = ('id', 'user')
         model = Readed
+
+
+class AllPostsSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(slug_field='username', read_only=True)
+    
+    class Meta:
+        exclude = ('id',)
+        model = Post
+
+
+class UserBlogSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(slug_field='username', read_only=True)
+    
+    def create(self, validated_data):
+        user_id = (
+            self.context.get('request')
+            .parser_context.get('kwargs').get('user_id')
+        )
+        author_id = validated_data.get('author').id
+        if user_id == author_id:
+            post = Post.objects.create(**validated_data)
+            return post
+        else:
+            raise ValidationError(
+                {'error': 'Вы не можете оставлять записи в чужом блоге'}
+            )
+    
+    class Meta:
+        exclude = ('id',)
+        model = Post
