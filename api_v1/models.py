@@ -60,12 +60,12 @@ class Follow(models.Model):
 class Readed(models.Model):
     user = models.ForeignKey(
         User,
-        related_name='user',
+        related_name='user_readed_post',
         on_delete=models.CASCADE,
     )
     post = models.ForeignKey(
         Post,
-        related_name='post',
+        related_name='readed_post',
         on_delete=models.DO_NOTHING,
     )
     
