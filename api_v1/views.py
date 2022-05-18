@@ -12,7 +12,7 @@ from api_v1.serializers import (
 POSTS_ON_FEED_PAGE = int(os.getenv('POSTS_ON_FEED_PAGE'))
 
 
-class FeedViewSet(viewsets.ReadOnlyModelViewSet):
+class FeedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """Логика работы ленты постов от авторов,
     на которых подписан пользователь.
     """
@@ -27,7 +27,10 @@ class FeedViewSet(viewsets.ReadOnlyModelViewSet):
         return posts
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class FollowViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
     """Логика работы подписок. Можно как посмотреть свои подписки('GET'),
     так и подписаться на пользователя по его id ('POST')."""
     
@@ -66,7 +69,10 @@ class AllPostsViewSet(
         serializer.save(author=self.request.user)
 
 
-class UserBlogViewSet(viewsets.ModelViewSet):
+class UserBlogViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
     """Переход на блог конкретного пользователя со всеми его постами.
     Если находишься в своем блоге - можешь так же создать новую запись.
     """
