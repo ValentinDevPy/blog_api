@@ -1,0 +1,56 @@
+version: "3.8"
+services:
+
+  # Redis
+  redis:
+    image: redis:alpine
+    container_name: redis
+
+  # Database Postgres
+  db:
+    image: postgres:14-alpine
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    container_name: postgres_db
+    ports:
+      - 5432:5432
+
+  # Django Application
+  app:
+    restart: on-failure
+    build: .
+    volumes:
+      - .:/blog_api
+    ports:
+      - 8000:8000
+    image: app:blog_api
+    container_name: django_app
+    command: sh -c "python manage.py migrate  && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+
+  # Celery
+  celery:
+    restart: on-failure
+    build: .
+    command: celery -A blog_api worker -l INFO
+    volumes:
+      - .:/blog_api
+    depends_on:
+      - app
+      - redis
+  celery-beat:
+    restart: on-failure
+    build: .
+    command: celery -A blog_api beat -l info
+    volumes:
+      - .:/blog_api
+    depends_on:
+      - app
+      - redis
+
+

@@ -60,10 +60,10 @@ class UserBlogSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         user_id = (
-            self.context.get('request')
-            .parser_context.get('kwargs').get('user_id')
+            int(self.context.get('request')
+            .parser_context.get('kwargs').get('user_id'))
         )
-        author_id = validated_data.get('author').id
+        author_id = int(validated_data.get('author').id)
         if user_id == author_id:
             post = Post.objects.create(**validated_data)
             return post
