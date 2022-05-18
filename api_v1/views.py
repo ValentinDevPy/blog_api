@@ -17,6 +17,7 @@ class FeedViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     на которых подписан пользователь.
     """
     serializer_class = FeedSerializer
+    permission_classes = (IsAuthenticated,)
     
     def get_queryset(self):
         user = self.request.user

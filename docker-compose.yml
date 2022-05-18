@@ -3,12 +3,13 @@ services:
 
   # Redis
   redis:
-    restart: on-failure
+    restart: always
     image: redis:alpine
     container_name: redis
 
   # Database Postgres
   db:
+    restart: always
     image: postgres:14-alpine
     volumes:
       - db-data:/var/lib/postgresql/data
@@ -22,7 +23,7 @@ services:
 
   # Django Application
   app:
-    restart: on-failure
+    restart: always
     build: .
     volumes:
       - .:/blog_api/
@@ -44,8 +45,9 @@ services:
     depends_on:
       - app
       - redis
+      - db
   celery-beat:
-    restart: on-failure
+    restart: always
     build: .
     volumes:
       - .:/blog_api/
@@ -53,5 +55,7 @@ services:
     depends_on:
       - app
       - redis
+      - db
+      - celery
 volumes:
   db-data:

@@ -10,17 +10,23 @@ class FeedSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
     
     class Meta:
-        exclude = ('id',)
+        fields = ('id', 'author', 'header', 'text',)
         model = Post
 
 
 class FollowSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
+        user_id = int(validated_data.get('user').id)
+        author_id = int(validated_data.get('author').id)
+        if author_id == user_id:
+            raise ValidationError(
+                {'error': 'На себя нельзя подписаться!'}
+            )
         try:
             follow = Follow.objects.create(**validated_data)
         except IntegrityError:
             raise ValidationError(
-                {'error': 'Вы уже подписаны на этого человека'}
+                {'error': 'Вы уже подписаны на этого человека.'}
             )
         return follow
     
@@ -48,7 +54,7 @@ class AllPostsSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
     
     class Meta:
-        exclude = ('id',)
+        fields = ('id', 'author', 'header', 'text',)
         model = Post
 
 
@@ -58,7 +64,7 @@ class UserBlogSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_id = (
             int(self.context.get('request')
-            .parser_context.get('kwargs').get('user_id'))
+                .parser_context.get('kwargs').get('user_id'))
         )
         author_id = int(validated_data.get('author').id)
         if user_id == author_id:
