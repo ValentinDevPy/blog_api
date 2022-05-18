@@ -41,7 +41,7 @@ git clone https://github.com/ValentinDevPy/blog_api
 ```
 
 ```
-cd api_final_yatube
+cd blog_api
 ```
 
 Запустить сборку и запуск проекта при помощи docker-compose:
