@@ -1,8 +1,12 @@
+import os
+
 from api_v1.models import User, Post
 
 from celery import shared_task
 from django.core.mail import send_mail
 from blog_api import settings
+
+NUMBER_OF_POSTS_IN_EMAIL = int(os.getenv('NUMBER_OF_POSTS_IN_EMAIL'))
 
 
 @shared_task(bind=True)
@@ -12,7 +16,7 @@ def send_mail_func(self):
         mail_subject = "Latest posts"
         posts = (
             Post.objects.filter(author__following__user=user)
-            .exclude(readed_post__user__exact=user)[:5]
+            .exclude(readed_post__user__exact=user)[:NUMBER_OF_POSTS_IN_EMAIL]
         )
         posts_text = [f'Text: {post.text} Author: {post.author}' for post in posts]
         posts_text = '\n'.join(posts_text)

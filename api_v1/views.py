@@ -13,6 +13,9 @@ POSTS_ON_FEED_PAGE = int(os.getenv('POSTS_ON_FEED_PAGE'))
 
 
 class FeedViewSet(viewsets.ReadOnlyModelViewSet):
+    """Логика работы ленты постов от авторов,
+    на которых подписан пользователь.
+    """
     serializer_class = FeedSerializer
     
     def get_queryset(self):
@@ -25,15 +28,23 @@ class FeedViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
+    """Логика работы подписок. Можно как посмотреть свои подписки('GET'),
+    так и подписаться на пользователя по его id ('POST')."""
+    
     serializer_class = FollowSerializer
+    
+    def get_queryset(self):
+        user = self.request.user
+        follows = Follow.objects.filter(user=user)
+        return follows
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class ReadedViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    queryset = Readed.objects.all()
+    """ Можно пометить пост как прочитанный по его id ('POST')."""
+    
     serializer_class = ReadedSerializer
     permission_classes = (IsAuthenticated,)
     
@@ -45,6 +56,8 @@ class AllPostsViewSet(
     mixins.CreateModelMixin, mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
+    """Просмотр всей ленты новостей, отсюда тоже можно созать новый пост."""
+    
     queryset = Post.objects.all()
     serializer_class = AllPostsSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -54,6 +67,9 @@ class AllPostsViewSet(
 
 
 class UserBlogViewSet(viewsets.ModelViewSet):
+    """Переход на блог конкретного пользователя со всеми его постами.
+    Если находишься в своем блоге - можешь так же создать новую запись.
+    """
     serializer_class = UserBlogSerializer
     permission_classes = (IsAuthenticated,)
     ordering = ['-pub_date']

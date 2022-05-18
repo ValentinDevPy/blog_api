@@ -58,6 +58,7 @@ class Follow(models.Model):
 
 
 class Readed(models.Model):
+    """Модель, описывающая прочтенные каждым пользователем посты."""
     user = models.ForeignKey(
         User,
         related_name='user_readed_post',

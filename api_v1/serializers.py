@@ -7,7 +7,6 @@ from api_v1.models import Post, Follow, Readed
 
 
 class FeedSerializer(serializers.ModelSerializer):
-    """Сериализатор ленты, основанной на подписках на авторов."""
     author = SlugRelatedField(slug_field='username', read_only=True)
     
     class Meta:
@@ -16,8 +15,6 @@ class FeedSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    """Сериализатор подписок на авторов."""
-    
     def create(self, validated_data):
         try:
             follow = Follow.objects.create(**validated_data)
