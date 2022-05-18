@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'djoser',
     
     'api_v1.apps.ApiV1Config',
+    'send_emails.apps.SendEmailsConfig',
 ]
 
 MIDDLEWARE = [
@@ -115,8 +116,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
 
-
-CELERY_RESULT_BACKEND = 'django-db'
-
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_ADMIN = 'from@example.com'
+
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
