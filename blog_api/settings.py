@@ -1,9 +1,16 @@
+import logging
 import os
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename='program.log',
+    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
+)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
