@@ -8,7 +8,7 @@ load_dotenv()
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename='program.log',
+    filename='logs/program.log',
     format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
 )
 

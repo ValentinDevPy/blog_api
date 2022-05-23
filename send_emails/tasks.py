@@ -12,7 +12,7 @@ NUMBER_OF_POSTS_IN_EMAIL = int(os.getenv('NUMBER_OF_POSTS_IN_EMAIL'))
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-handler = RotatingFileHandler('email.log', maxBytes=50000000, backupCount=5)
+handler = RotatingFileHandler('logs/email.log', maxBytes=50000000, backupCount=5)
 logger.addHandler(handler)
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -28,7 +28,7 @@ def send_mail_func(self):
         mail_subject = "Latest posts"
         posts = (
             Post.objects.filter(author__following__user=user)
-                .exclude(readed_post__user__exact=user)[:NUMBER_OF_POSTS_IN_EMAIL]
+            .exclude(readed_post__user__exact=user)[:NUMBER_OF_POSTS_IN_EMAIL]
         )
         posts_text = [f'Text: {post.text} Author: {post.author}' for post in posts]
         posts_text = '\n'.join(posts_text)
