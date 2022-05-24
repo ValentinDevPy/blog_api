@@ -33,6 +33,8 @@ class Post(models.Model):
     
     class Meta:
         ordering = ['-pub_date']
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
 
 
 class Follow(models.Model):
@@ -50,7 +52,12 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
     )
     
+    def __str__(self):
+        return f'Пользователь {self.user}подписан на автора{self.author}'
+    
     class Meta:
+        verbose_name = 'Пользователь подписан на блог'
+        verbose_name_plural = 'Пользователи подписаны на блоги'
         constraints = [UniqueConstraint(
             fields=['user', 'author'],
             name='unique_follow',
@@ -70,8 +77,14 @@ class Readed(models.Model):
         on_delete=models.DO_NOTHING,
     )
     
+    def __str__(self):
+        return f'Пользователь {self.user} прочитал пост {self.post.text[:15]}'
+    
     class Meta:
+        verbose_name = 'Прочитанный пост'
+        verbose_name_plural = 'Прочитанные посты'
         constraints = [UniqueConstraint(
             fields=['user', 'post'],
             name='unique_readed',
         )]
+
